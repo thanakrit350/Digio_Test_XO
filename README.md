@@ -1,6 +1,9 @@
 # Digio_Test_XO
 ## 📺 วิดีโอสาธิตการใช้งาน
 
+## 📺 วิดีโอสาธิตการใช้งาน
+
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://drive.google.com/file/d/1DqL5iJ_V8_TIKri_09kpXMRl62-ZmwaK/view?usp=drive_link)
 - [ดูวิดีโอสอนการใช้งานระบบ](https://drive.google.com/file/d/1DqL5iJ_V8_TIKri_09kpXMRl62-ZmwaK/view?usp=drive_link)
 
 ระบบเกม XO แบบปรับขนาดได้  
