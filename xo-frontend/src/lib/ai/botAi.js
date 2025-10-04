@@ -4,7 +4,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
 
   const human = botSymbol === "X" ? "O" : "X";
   const b = board.map(row => row.slice());
-
   const LVL = String(level || "NORMAL").toUpperCase();
 
   const CFG_BY_LEVEL = {
@@ -12,8 +11,8 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
     NORMAL: { attackW: 1.00, defenseW: 1.30, nearWinOffBonus: 6,  nearLossDefBonus: 20, neutral: 0.15, jitter: 0.05, centerBias: 0.30 },
     HARD:   { attackW: 1.35, defenseW: 1.05, nearWinOffBonus: 10, nearLossDefBonus: 25, neutral: 0.20, jitter: 0.00, centerBias: 0.35 },
   };
-  const CFG = CFG_BY_LEVEL[LVL] || CFG_BY_LEVEL.NORMAL;
 
+  const CFG = CFG_BY_LEVEL[LVL] || CFG_BY_LEVEL.NORMAL;
   const DIRS = [[0,1],[1,0],[1,1],[1,-1]];
   const mid  = Math.floor(N / 2);
   const d2   = (r,c) => (r - mid) * (r - mid) + (c - mid) * (c - mid);
