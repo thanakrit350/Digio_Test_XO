@@ -2,7 +2,6 @@ package org.itsci.Digio_Test_XO.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.Calendar;
 
 @Entity
 @Table(name = "histories")

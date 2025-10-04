@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.itsci.Digio_Test_XO.model.Game;
 import org.itsci.Digio_Test_XO.model.History;
