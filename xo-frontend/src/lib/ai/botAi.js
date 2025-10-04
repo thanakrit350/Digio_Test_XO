@@ -7,7 +7,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
 
   const LVL = String(level || "NORMAL").toUpperCase();
 
-  // EASY = พอดี: ง่ายกว่า NORMAL แต่ไม่เฟอะฟะ
   const CFG_BY_LEVEL = {
     EASY:   { attackW: 0.80, defenseW: 1.00, nearWinOffBonus: 3,  nearLossDefBonus: 10, neutral: 0.15, jitter: 0.12, centerBias: 0.22 },
     NORMAL: { attackW: 1.00, defenseW: 1.30, nearWinOffBonus: 6,  nearLossDefBonus: 20, neutral: 0.15, jitter: 0.05, centerBias: 0.30 },
@@ -37,7 +36,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
     return ok;
   };
 
-  // 1) ชนะได้เลย → ชนะ
   for (const [r,c] of empties) if (isWinIfPlace(r,c,botSymbol)) return [r,c];
   for (const [r,c] of empties) if (isWinIfPlace(r,c,human)) return [r,c];
 
@@ -102,7 +100,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
     return false;
   }
 
-  // จัดอันดับช่องจากคะแนนแบบบุก/รับ + center bonus
   function rankedWeightedMoves() {
     const jitter = () => (CFG.jitter ? (Math.random()*2-1) * CFG.jitter : 0);
     const ranks = [];
@@ -124,7 +121,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
           }
 
           if (cntSelf > 0 && cntOpp > 0) {
-            // 0 แต้ม
           } else if (cntSelf > 0 && cntOpp === 0) {
             let w = 1 + (cntSelf / K);
             if (cntSelf === K-1) w += CFG.nearWinOffBonus;
@@ -153,7 +149,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
   const ranks = rankedWeightedMoves();
   const bestOff = ranks[0];
 
-  // เลือก index จาก Top-3 แบบสุ่มถ่วงน้ำหนัก (0.7, 0.2, 0.1)
   function pickFromTop(ranks, k = 3) {
     const size = Math.min(k, ranks.length);
     const weights = [0.7, 0.2, 0.1].slice(0, size);
@@ -163,7 +158,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
     return 0;
   }
 
-  // ตัดสินใจขั้นสุดท้าย
   if (LVL === "HARD") {
     if (!blk) return [bestOff.r, bestOff.c];
     if (bestOff.mkNear) return [bestOff.r, bestOff.c];
@@ -176,17 +170,13 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
     return [bestOff.r, bestOff.c];
   }
 
-  // === EASY (พอดี) ===
   if (LVL === "EASY") {
-    // กันจุดตัด "แรง" (>=3) แน่นอน (ถ้าเราไม่ได้กำลังจะ near-win)
     if (blk && blk.count >= 3 && !bestOff.mkNear) return [blk.r, blk.c];
 
-    // จุดตัด "ปานกลาง" (=2) มีโอกาสกัน 60% ถ้าเราไม่ได้ near-win
     if (blk && blk.count === 2 && !bestOff.mkNear && Math.random() < 0.6) {
       return [blk.r, blk.c];
     }
 
-    // ไม่กัน → เลือกจาก Top-3 แบบสุ่มถ่วงน้ำหนัก (เน้นอันดับ 1 แต่เปิดช่องให้ผิดพลาดเล็กน้อย)
     const idx = pickFromTop(ranks, 3);
     const pick = ranks[idx] || bestOff;
     return [pick.r, pick.c];
