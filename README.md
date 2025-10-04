@@ -63,7 +63,7 @@
 
 ---
 
-### Frontend (React)
+### Frontend (React Node.js)
 
 1. **เปิดโปรเจกต์ Frontend**
    - เปิด Visual Studio Code (แท็บใหม่หรือ window ใหม่)
