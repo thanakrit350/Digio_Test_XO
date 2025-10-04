@@ -39,7 +39,6 @@ export function chooseAIMove(board, K, botSymbol = "O", level = "NORMAL") {
 
   // 1) ชนะได้เลย → ชนะ
   for (const [r,c] of empties) if (isWinIfPlace(r,c,botSymbol)) return [r,c];
-  // 2) ฝั่งมนุษย์ชนะทันที → กันก่อน
   for (const [r,c] of empties) if (isWinIfPlace(r,c,human)) return [r,c];
 
   function getSoftBlockPattern(K) {
