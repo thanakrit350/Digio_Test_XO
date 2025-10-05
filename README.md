@@ -88,7 +88,7 @@
    ```
    - รอจนกว่า Server จะทำงาน (จะแสดงข้อความ "BFF running at http://localhost:4000")
 
-5. **รัน React Application**
+5. **รัน React Frontend**
    - เปิด Terminal ใหม่ โดยคลิก `Terminal` > `New Terminal`
    - รันคำสั่ง:
    ```bash
