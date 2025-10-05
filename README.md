@@ -51,7 +51,7 @@
      COLLATE utf8_general_ci;
    ```
 
-6. **รัน Spring Boot Application**
+6. **รัน Spring Boot Backend**
    - กลับมาที่ Visual Studio Code
    - เปิด `Spring Boot Dashboard` (แถบด้านซ้าย)
    - คลิกปุ่ม Run (▶️) ที่ชื่อโปรเจกต์ DigioTestXoApplication
