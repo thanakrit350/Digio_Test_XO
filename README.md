@@ -51,7 +51,7 @@
      COLLATE utf8_general_ci;
    ```
 
-6. **รัน Spring Boot Application**
+6. **รัน Spring Boot Backend**
    - กลับมาที่ Visual Studio Code
    - เปิด `Spring Boot Dashboard` (แถบด้านซ้าย)
    - คลิกปุ่ม Run (▶️) ที่ชื่อโปรเจกต์ DigioTestXoApplication
@@ -88,7 +88,7 @@
    ```
    - รอจนกว่า Server จะทำงาน (จะแสดงข้อความ "BFF running at http://localhost:4000")
 
-5. **รัน React Application**
+5. **รัน React Frontend**
    - เปิด Terminal ใหม่ โดยคลิก `Terminal` > `New Terminal`
    - รันคำสั่ง:
    ```bash
@@ -300,7 +300,7 @@ Weight = 1 (ช่องว่าง) + (จำนวนตำแหน่งต
 - แนวตั้ง: (1,4,7), (3,6,9)
 
 **ช่องที่มีจุดตัดสูงสุด:**
-- ช่อง 1, 3, 7, 9 (ผ่านหลายเส้น)
+- ช่อง 1, 3, 7, 9 (มีเส้นทางชนะ2เส้น แนวตั้งและแนวนอน)
 
 ---
 
@@ -335,7 +335,7 @@ X | 2 | 3
 
 **สูตร:**
 ```
-Weight_Defense = (จำนวนตัวคู่แข่งในเส้น / จำนวนช่องที่ต้องชนะ)
+Weight_Defense = 1 + (จำนวนตัวคู่แข่งในเส้น / จำนวนช่องที่ต้องชนะ)
 ```
 
 **ตัวอย่าง:** กระดาน 3×3, ชนะ 3
