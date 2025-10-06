@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>แดชบอร์ดการประเมินโมเดล – XO Bot</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>แดชบอร์ดการประเมินโมเดล XO Bot</h1>
+    <p class="subtitle">วิเคราะห์ประสิทธิภาพบอทในการเล่น XO ตามระดับผู้เล่นและโหมดต่างๆ</p>
+  </header>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>ขนาดตาราง (N)</label>
+      <select id="selN"></select>
+    </div>
+    <div class="control-group">
+      <label>จำนวนตัวเรียง (K)</label>
+      <select id="selK"></select>
+    </div>
+    <div class="control-group">
+      <label>ระดับผู้เล่น</label>
+      <select id="selSkill">
+        <option value="NOVICE">ผู้เล่นพื้นฐาน</option>
+        <option value="AMATEUR">ผู้เล่นสมัครเล่น</option>
+        <option value="PRO">ผู้เล่นมืออาชีพ</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <div class="card">
+      <div class="card-header">
+        <h2>ตารางอัตราการชนะ (Win Rate)</h2>
+        <p>เปรียบเทียบโหมดบอทกับระดับผู้เล่น</p>
+      </div>
+      <div class="card-body">
+        <div class="table-wrapper">
+          <table class="heat" id="heat"></table>
+        </div>
+        <div class="legend">
+          <span class="legend-item">
+            <span class="swatch" style="background:#f8f9fa"></span>
+            <span>0-50%</span>
+          </span>
+          <span class="legend-item">
+            <span class="swatch" style="background:#ffd89b"></span>
+            <span>50-70%</span>
+          </span>
+          <span class="legend-item">
+            <span class="swatch" style="background:#ff8c66"></span>
+            <span>70-85%</span>
+          </span>
+          <span class="legend-item">
+            <span class="swatch" style="background:#e74c3c"></span>
+            <span>85-100%</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>กราฟเปรียบเทียบ</h2>
+        <p>Win Rate ของบอทแต่ละโหมด</p>
+      </div>
+      <div class="card-body">
+        <canvas id="bar"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let DATA=null;
+
+const BOT_LEVELS = ["EASY","NORMAL","HARD"];
+const SKILLS = ["NOVICE","AMATEUR","PRO"];
+const SKILL_NAMES_TH = {
+  NOVICE: "ผู้เล่นพื้นฐาน",
+  AMATEUR: "ผู้เล่นสมัครเล่น",
+  PRO: "ผู้เล่นมืออาชีพ"
+};
+
+function colorFor(p){
+  if (p>=85) return "#e74c3c";
+  if (p>=70) return "#ff8c66";
+  if (p>=50) return "#ffd89b";
+  return "#f8f9fa";
+}
+
+function unique(arr){ return [...new Set(arr)]; }
+function filterRows(N,K){ return DATA.rows.filter(r=>r.N===N && r.K===K); }
+
+function buildHeat(N,K){
+  const rows = filterRows(N,K);
+  const table = document.getElementById("heat");
+  table.innerHTML="";
+
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  trh.innerHTML = "<th></th>" + BOT_LEVELS.map(b=>`<th>${b}</th>`).join("");
+  thead.appendChild(trh); 
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  for(const skill of SKILLS){
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<th>${SKILL_NAMES_TH[skill]}</th>` +
+      BOT_LEVELS.map(level=>{
+        const row = rows.find(x=>x.skill===skill && x.level===level);
+        const p = row ? row.winPct : 0;
+        return `<td style="background:${colorFor(p)}"><strong>${p.toFixed(1)}%</strong></td>`;
+      }).join("");
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+}
+
+let barChart=null;
+function buildBar(N,K,skillValue){
+  const ctx = document.getElementById("bar").getContext("2d");
+  const rows = filterRows(N,K).filter(r=>r.skill===skillValue);
+  const labels = BOT_LEVELS;
+  const data = labels.map(lvl => {
+    const r = rows.find(x=>x.level===lvl);
+    return r ? r.winPct : 0;
+  });
+  if(barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type:"bar",
+    data:{ 
+      labels, 
+      datasets:[{ 
+        label:`Win Rate`, 
+        data,
+        backgroundColor: ['#4CAF50', '#FF9800', '#F44336'],
+        borderRadius: 8,
+        borderWidth: 0
+      }] 
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio: true,
+      scales:{ 
+        y:{ 
+          beginAtZero:true, 
+          max:100, 
+          ticks: {
+            callback: function(value) {
+              return value + '%';
+            }
+          },
+          grid: {
+            color: '#f0f0f0'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      },
+      plugins:{ 
+        legend:{display:false},
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return 'Win Rate: ' + context.parsed.y.toFixed(1) + '%';
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+async function main(){
+  const resp = await fetch("./results.json");
+  DATA = await resp.json();
+
+  const Ns = unique(DATA.rows.map(r=>r.N)).sort((a,b)=>a-b);
+  const selN = document.getElementById("selN");
+  Ns.forEach(n=>{ const o=document.createElement("option"); o.textContent=n; selN.appendChild(o); });
+
+  const selK = document.getElementById("selK");
+  function refreshK(){
+    const N = Number(selN.value);
+    const Ks = unique(DATA.rows.filter(r=>r.N===N).map(r=>r.K)).sort((a,b)=>a-b);
+    selK.innerHTML="";
+    Ks.forEach(k=>{ const o=document.createElement("option"); o.textContent=k; selK.appendChild(o); });
+  }
+
+  selN.addEventListener("change", ()=>{ refreshK(); update(); });
+  selK.addEventListener("change", update);
+  document.getElementById("selSkill").addEventListener("change", update);
+
+  selN.value = Ns.includes(5)?String(5):String(Ns[0]);
+  refreshK();
+  update();
+
+  function update(){
+    const N = Number(selN.value);
+    const K = Number(selK.value);
+    const skillValue = document.getElementById("selSkill").value;
+    buildHeat(N,K);
+    buildBar(N,K,skillValue);
+  }
+}
+main();
+</script>
+</body>
+</html>

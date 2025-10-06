@@ -23,7 +23,8 @@
     "server": "node server/server.js",
     "server:dev": "nodemon --exec node server/server.js",
     "build": "react-scripts build",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "eval": "npm --prefix eval start"
   },
   "eslintConfig": {
     "extends": [
